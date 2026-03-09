@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merci !</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+        .container {
+            max-width: 600px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #38bdf8, #6366f1);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .btn.secondary {
+            background: rgba(255,255,255,0.1);
+        }
+        .icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon"><i class="fas fa-heart"></i></div>
+        <h1>Merci !</h1>
+        <p>Nous avons bien reçu tes réponses. <br> Grâce à toi, nous allons construire la meilleure plateforme Otaku.</p>
+        <div>
+            <a href="index.html" class="btn"><i class="fas fa-pencil-alt"></i> Retour au sondage</a>
+        </div>
+    </div>
+</body>
+</html>

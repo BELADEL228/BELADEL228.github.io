@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sondage Otaku - 30 questions</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.4rem;
+            background: linear-gradient(45deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #1e293b;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #38bdf8, #6366f1);
+            transition: width 0.3s;
+        }
+
+        .section {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #38bdf8;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #38bdf8;
+            font-size: 1.5rem;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .question:hover {
+            transform: scale(1.01);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .question label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .radio-group label, .checkbox-group label {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .radio-group label:hover, .checkbox-group label:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid #38bdf8;
+        }
+
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 30px;
+            color: #4b5563;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #ffb700;
+        }
+
+        button {
+            background: linear-gradient(45deg, #38bdf8, #6366f1);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .note {
+            text-align: center;
+            margin-top: 20px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-dragon"></i> Sondage Otaku - 30 questions</h1>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <form id="surveyForm"></form>
+
+        <div class="note">
+            Tes réponses aideront à créer la meilleure plateforme Otaku.
+        </div>
+    </div>
+
+    <script>
+        // Définition des 30 questions (8 sections)
+        const sections = [
+            {
+                title: 'Ton identité d’Otaku',
+                icon: 'fa-user-ninja',
+                questions: [
+                    { type: 'text', name: 'pseudo', label: '1. Quel pseudo utilises-tu dans la communauté anime ?', required: true },
+                    { type: 'number', name: 'age', label: '2. Quel âge as-tu ?', min: 1, max: 120 },
+                    { type: 'radio', name: 'gender', label: '3. Genre', options: ['Homme', 'Femme', 'Autre', 'Préfère ne pas dire'] },
+                    { type: 'select', name: 'country', label: '4. Dans quel pays vis-tu ?', options: ['Togo', 'Bénin', 'Côte d’Ivoire', 'Sénégal', 'Cameroun', 'Nigeria', 'France', 'Autre'] },
+                    { type: 'textarea', name: 'bio', label: '5. Parle-nous un peu de toi (passions, métier, etc.)', rows: 3 }
+                ]
+            },
+            {
+                title: 'Ta vie avec les anime',
+                icon: 'fa-tv',
+                questions: [
+                    { type: 'select', name: 'animePerSeason', label: '6. Combien d\'animés regardes-tu par saison ?', options: ['0', '1-3', '4-7', '8-12', '13+'] },
+                    { type: 'checkbox', name: 'platforms', label: '7. Quelles plateformes utilises-tu ?', options: ['Crunchyroll', 'Netflix', 'ADN', 'Wakanim', 'Amazon Prime', 'Telegram', 'Sites streaming', 'Téléchargement'] },
+                    { type: 'radio', name: 'subDub', label: '8. Préfères-tu VOSTFR ou VF ?', options: ['VOSTFR', 'VF', 'Indifférent'] },
+                    { type: 'textarea', name: 'viewingHabits', label: '9. Décris ta routine de visionnage (moment, fréquence, etc.)', rows: 3 },
+                    { type: 'text', name: 'favoriteGenre', label: '10. Quel est ton genre d\'anime préféré ?' }
+                ]
+            },
+            {
+                title: 'La réalité Otaku en Afrique',
+                icon: 'fa-globe-africa',
+                questions: [
+                    { type: 'radio', name: 'internet', label: '11. Ta connexion internet te permet-elle de regarder facilement ?', options: ['Oui', 'Parfois', 'C’est compliqué', 'Très difficile'] },
+                    { type: 'radio', name: 'community', label: '12. Trouves-tu facilement d’autres otaku ?', options: ['Oui beaucoup', 'Quelques-uns', 'Très peu', 'Presque aucun'] },
+                    { type: 'textarea', name: 'problems', label: '13. Quelles difficultés rencontrent les otaku en Afrique ?', rows: 3 },
+                    { type: 'radio', name: 'events', label: '14. As-tu déjà participé à un événement otaku ?', options: ['Oui', 'Non', 'Je rêve d’y participer'] }
+                ]
+            },
+            {
+                title: 'Communauté Otaku',
+                icon: 'fa-users',
+                questions: [
+                    { type: 'checkbox', name: 'socialFeatures', label: '15. Quelles fonctionnalités sociales aimerais-tu ?', options: ['Liste d\'amis', 'Messagerie privée', 'Clans/teams', 'Forums', 'Événements communautaires', 'Chat vocal', 'Débats anime', 'Théories'] },
+                    { type: 'radio', name: 'shareImportance', label: '16. Partager ce que je regarde avec mes amis est important pour moi', options: ['1', '2', '3', '4', '5'], isRating: true },
+                    { type: 'textarea', name: 'socialIdeas', label: '17. As-tu des idées originales pour améliorer le social ?', rows: 3 }
+                ]
+            },
+            {
+                title: 'Jeux et défis',
+                icon: 'fa-gamepad',
+                questions: [
+                    { type: 'checkbox', name: 'gameTypes', label: '18. Quels types de jeux aimerais-tu ?', options: ['Quiz par anime', 'Défis entre clans', 'Memory / mini-jeux', 'Chasses au trésor', 'Badges et succès', 'Combat de personnages', 'Deviner l’anime'] },
+                    { type: 'radio', name: 'rankings', label: '19. Les classements mondiaux te motivent-ils ?', options: ['Oui', 'Non', 'Peut-être'] },
+                    { type: 'textarea', name: 'gameIdeas', label: '20. Propose un mini-jeu ou défi qui te plairait', rows: 3 }
+                ]
+            },
+            {
+                title: 'Création et partage',
+                icon: 'fa-paint-brush',
+                questions: [
+                    { type: 'checkbox', name: 'creations', label: '21. Quels contenus aimerais-tu partager ?', options: ['Fanart', 'Cosplay', 'AMV', 'Fanfics', 'Mèmes', 'Critiques'] },
+                    { type: 'radio', name: 'storytelling', label: '22. Serais-tu intéressé par du storytelling collaboratif ?', options: ['Oui', 'Non', 'Peut-être'] },
+                    { type: 'textarea', name: 'creationIdeas', label: '23. Comment aimerais-tu voir les créations des autres ?', rows: 3 }
+                ]
+            },
+            {
+                title: 'Innovation',
+                icon: 'fa-rocket',
+                questions: [
+                    { type: 'radio', name: 'ar', label: '24. La réalité augmentée (scanner une figurine) t\'intéresse ?', options: ['Oui, carrément', 'Pas vraiment', 'Bof'] },
+                    { type: 'radio', name: 'imageRecog', label: '25. La reconnaissance d\'image pour retrouver un anime à partir d\'une capture ?', options: ['1', '2', '3', '4', '5'], isRating: true },
+                    { type: 'textarea', name: 'innovativeIdeas', label: '26. Quelle innovation tech aimerais-tu voir ?', rows: 3 }
+                ]
+            },
+            {
+                title: 'Tes rêves d’Otaku',
+                icon: 'fa-star',
+                questions: [
+                    { type: 'radio', name: 'premium', label: '27. Serais-tu prêt à payer un abonnement premium ?', options: ['Oui', 'Non', 'Peut-être selon le prix'] },
+                    { type: 'checkbox', name: 'purchases', label: '28. Quels achats intégrés te plairaient ?', options: ['Avatars exclusifs', 'Badges', 'Thèmes', 'Goodies réels', 'Accès anticipé'] },
+                    { type: 'textarea', name: 'missing', label: '29. Qu\'est-ce qui manque le plus dans les applis actuelles ?', rows: 4 },
+                    { type: 'textarea', name: 'magic', label: '30. Si tu avais une baguette magique, quelle fonctionnalité ajouterais-tu ?', rows: 4 }
+                ]
+            }
+        ];
+
+        // Générer le formulaire
+        const form = document.getElementById('surveyForm');
+        sections.forEach((section, idx) => {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'section';
+            sectionDiv.id = `section-${idx}`;
+            sectionDiv.innerHTML = `
+                <h2><i class="fas ${section.icon}"></i> ${section.title}</h2>
+                ${section.questions.map(q => createQuestionHTML(q)).join('')}
+            `;
+            form.appendChild(sectionDiv);
+        });
+
+        // Ajouter le bouton de soumission
+        const submitBtn = document.createElement('button');
+        submitBtn.type = 'submit';
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer mes réponses';
+        form.appendChild(submitBtn);
+
+        // Fonction pour générer le HTML d'une question
+        function createQuestionHTML(q) {
+            let html = '<div class="question">';
+            html += `<label>${q.label} ${q.required ? '<span style="color:#38bdf8;">*</span>' : ''}</label>`;
+
+            if (q.type === 'text') {
+                html += `<input type="text" name="${q.name}" ${q.required ? 'required' : ''}>`;
+            } else if (q.type === 'number') {
+                html += `<input type="number" name="${q.name}" min="${q.min || 0}" max="${q.max || 100}" ${q.required ? 'required' : ''}>`;
+            } else if (q.type === 'select') {
+                html += `<select name="${q.name}">`;
+                q.options.forEach(opt => {
+                    html += `<option value="${opt}">${opt}</option>`;
+                });
+                html += '</select>';
+            } else if (q.type === 'radio') {
+                if (q.isRating) {
+                    html += '<div class="rating">';
+                    for (let i = 5; i >= 1; i--) {
+                        html += `
+                            <input type="radio" name="${q.name}" value="${i}" id="${q.name}${i}">
+                            <label for="${q.name}${i}">★</label>
+                        `;
+                    }
+                    html += '</div>';
+                } else {
+                    html += '<div class="radio-group">';
+                    q.options.forEach(opt => {
+                        html += `
+                            <label>
+                                <input type="radio" name="${q.name}" value="${opt}"> ${opt}
+                            </label>
+                        `;
+                    });
+                    html += '</div>';
+                }
+            } else if (q.type === 'checkbox') {
+                html += '<div class="checkbox-group">';
+                q.options.forEach(opt => {
+                    html += `
+                        <label>
+                            <input type="checkbox" name="${q.name}" value="${opt}"> ${opt}
+                        </label>
+                    `;
+                });
+                html += '</div>';
+            } else if (q.type === 'textarea') {
+                html += `<textarea name="${q.name}" rows="${q.rows || 3}"></textarea>`;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        // Gestion de la progression
+        const progressFill = document.getElementById('progressFill');
+        form.addEventListener('input', function() {
+            const inputs = form.querySelectorAll('input, select, textarea');
+            let filled = 0;
+            inputs.forEach(input => {
+                if (input.type === 'radio' || input.type === 'checkbox') {
+                    if (input.type === 'radio') {
+                        const name = input.name;
+                        const checked = form.querySelector(`input[name="${name}"]:checked`);
+                        if (checked) filled++;
+                    } else if (input.type === 'checkbox') {
+                        if (input.checked) filled++;
+                    }
+                } else {
+                    if (input.value.trim() !== '') filled++;
+                }
+            });
+            const totalFields = inputs.length;
+            const percent = (filled / totalFields) * 100;
+            progressFill.style.width = Math.min(percent, 100) + '%';
+        });
+
+        // Animation des sections au scroll
+        const sectionsElements = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        sectionsElements.forEach(section => observer.observe(section));
+
+        // Soumission du formulaire
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = {};
+
+            for (let [key, value] of formData.entries()) {
+                // Gestion des checkbox : on les regroupe
+                if (key === 'platforms' || key === 'socialFeatures' || key === 'gameTypes' || key === 'creations' || key === 'purchases') {
+                    if (!response[key]) response[key] = [];
+                    response[key].push(value);
+                } else {
+                    response[key] = value;
+                }
+            }
+
+            // Convertir les arrays en chaînes pour le stockage
+            response.platforms = response.platforms ? response.platforms.join(', ') : '';
+            response.socialFeatures = response.socialFeatures ? response.socialFeatures.join(', ') : '';
+            response.gameTypes = response.gameTypes ? response.gameTypes.join(', ') : '';
+            response.creations = response.creations ? response.creations.join(', ') : '';
+            response.purchases = response.purchases ? response.purchases.join(', ') : '';
+
+            // Ajouter timestamp
+            response.timestamp = new Date().toISOString();
+
+            // Récupérer les anciennes réponses
+            let responses = JSON.parse(localStorage.getItem('otakuResponses')) || [];
+            responses.push(response);
+            localStorage.setItem('otakuResponses', JSON.stringify(responses));
+
+            alert('Merci pour tes réponses ! Redirection vers le dashboard...');
+            window.location.href = 'merci.html';
+        });
+    </script>
+</body>
+</html>
